@@ -96,7 +96,7 @@ def run_session(day, models, history, smoke=False):
             f"Jour {item['day']} — {item['question']} — "
             + excerpts(item["rounds"]["repliques"], 950) for item in history
         )
-    with ThreadPoolExecutor(max_workers=6) as pool:
+    with ThreadPoolExecutor(max_workers=2) as pool:
         initial = list(pool.map(
             ask, models, [question + context + "\nFormule une thèse et un test qui pourrait la réfuter."] * 6
         ))
