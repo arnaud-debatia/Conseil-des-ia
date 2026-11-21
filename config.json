@@ -1,0 +1,19 @@
+{
+  "models": [
+    "google/gemma-4-26b-a4b-it:free",
+    "nvidia/nemotron-3.5-lightning:free",
+    "baidu/ernie-5.5-flash-preview:free",
+    "inclusionai/ling-3.2-flash:free",
+    "liquid/lfm-3-1.7b:free",
+    "recursive/flint-v1.0:free"
+  ],
+  "axes": [
+    "Quels bénéfices et dommages mesurables de l’IA comptent le plus pour le bien-être humain ?",
+    "Comment tester si la collaboration de plusieurs IA améliore les découvertes scientifiques ?",
+    "Qui profite de l’IA, qui en supporte les coûts et comment mieux répartir les gains ?",
+    "Comment préserver l’autonomie humaine quand une IA conseille ou filtre l’information ?",
+    "Quelles mesures de gouvernance réduiraient la concentration du pouvoir et les risques systémiques ?",
+    "Quels futurs plausibles sont négligés et quels signaux permettraient de les détecter ?",
+    "Quels désaccords subsistent et quelles expériences permettraient de les départager ?"
+  ]
+}
