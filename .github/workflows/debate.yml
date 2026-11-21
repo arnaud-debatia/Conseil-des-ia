@@ -1,0 +1,69 @@
+name: Conseil des IA
+
+on:
+  schedule:
+    - cron: '17 17,20 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Mode
+        type: choice
+        default: check
+        options:
+          - check
+          - smoke
+          - debate
+
+concurrency:
+  group: conseil-des-ia
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: github.event.repository.visibility == 'public' && github.ref_name == github.event.repository.default_branch && github.event_name == 'workflow_dispatch' && inputs.mode == 'check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest -v && python3 debate.py check
+
+  smoke:
+    if: github.event.repository.visibility == 'public' && github.ref_name == github.event.repository.default_branch && github.event_name == 'workflow_dispatch' && inputs.mode == 'smoke'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - run: python3 debate.py smoke
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+  debate:
+    if: github.event.repository.visibility == 'public' && github.ref_name == github.event.repository.default_branch && vars.CONSEIL_START_DATE != '' && (github.event_name == 'schedule' || inputs.mode == 'debate')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - run: python3 debate.py debate
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          CONSEIL_START_DATE: ${{ vars.CONSEIL_START_DATE }}
+      - name: Archiver la transcription
+        run: |
+          if [ -f data/COUVERTURE.md ]; then
+            git add data
+            if ! git diff --cached --quiet; then
+              git -c user.name='github-actions[bot]' \
+                  -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+                  commit -m 'Archiver la séance du Conseil des IA'
+              git push
+            fi
+          fi
